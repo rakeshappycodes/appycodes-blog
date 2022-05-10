@@ -2,3 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm lint && npm build
+npm run lint && npm run build
+npm run build
