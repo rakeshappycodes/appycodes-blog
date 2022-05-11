@@ -1,21 +1,25 @@
-import { IsAlphanumeric, IsEmail, isEmail, IsNotEmpty, IsString } from "class-validator"
+import {
+  IsAlphanumeric,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
-export class AuthSignupDto{
-    @IsEmail()
-    @IsNotEmpty()
-    email:string;
+export class AuthSignupDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 
-    @IsString()
-    @IsNotEmpty()
-    first_name: string
+  @IsString()
+  @IsNotEmpty()
+  first_name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    last_name: string
+  @IsString()
+  @IsNotEmpty()
+  last_name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @IsAlphanumeric()
-    password:string
-
+  @IsString()
+  @IsNotEmpty()
+  @IsAlphanumeric()
+  password: string;
 }
