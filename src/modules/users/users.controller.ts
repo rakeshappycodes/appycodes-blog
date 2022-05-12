@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -10,28 +9,22 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUser } from '../auth/decorator';
 import { JwtGaurd } from '../auth/gaurds';
+import { UserEvent } from '@common/events/user.event';
 
-@UseGuards(JwtGaurd)
+
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
+    private readonly UserEvent: UserEvent,
   ) {}
-
+  @UseGuards(JwtGaurd)
   @Get('me')
   getMe(@GetUser() user: User) {
     return user;
-  }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(
-      createUserDto,
-    );
   }
 
   @Get()
@@ -39,24 +32,33 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':key')
+  findOne(@Param('key') key: string) {
+    return this.usersService.findOne(key);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(
-      +id,
-      updateUserDto,
-    );
+
+  /**
+   * Update user data
+   */
+    const params = { id, updateUserDto}
+    const updatedUser =  await this.usersService.update(params);
+
+  /**
+   * Send Event to User Event Emitter
+   */
+
+    this.UserEvent.userUpdateEvent(updatedUser);
+    return updatedUser;
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }

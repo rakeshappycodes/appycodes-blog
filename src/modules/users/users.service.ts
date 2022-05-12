@@ -1,29 +1,79 @@
+import { PrismaService } from '@common/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaUserResponseObject } from './decorator/prisma.user.decorator';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaError } from '@common/prisma/prismaError';
+import { UserNotFoundException } from '@common/exceptions';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    private readonly prisma : PrismaService
+  ) {}
+ 
+
+  async findAll() {
+    return await this.prisma.user.findMany({
+      select: PrismaUserResponseObject
+    })
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(key: string) {
+    const user =  await this.prisma.user.findMany({ 
+      where:{
+        OR:[
+          {
+            id:key
+          },
+          {
+            email:key
+          }
+        ]
+      },
+      select: PrismaUserResponseObject
+    })
+  
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
 
-  update(
-    id: number,
-    updateUserDto: UpdateUserDto,
+  async update(
+    params: {
+      id: string,
+      updateUserDto: UpdateUserDto
+    }
   ) {
-    return `This action updates a #${id} user`;
+    const { id, updateUserDto } = params;
+    try {
+      
+      return await this.prisma.user.update({
+        data: {
+          ...updateUserDto,
+        },
+        where:{ 
+          id:id
+        },
+        select: PrismaUserResponseObject
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === PrismaError.RecordDoesNotExist
+      ) {
+        throw new UserNotFoundException(id);
+      }
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  
+
+  async remove(id: string) {
+    return await this.prisma.user.delete({
+      where:{
+        id:id
+      }
+    });
   }
 }
