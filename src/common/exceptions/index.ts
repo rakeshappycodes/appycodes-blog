@@ -1,1 +1,1 @@
-export * from './UserNotFoundException'
+export * from './UserNotFoundException';

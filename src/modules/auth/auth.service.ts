@@ -46,7 +46,10 @@ export class AuthService {
         error instanceof
         PrismaClientKnownRequestError
       ) {
-        if (error.code === PrismaError.RecordAlreadyExists) {
+        if (
+          error.code ===
+          PrismaError.RecordAlreadyExists
+        ) {
           throw new ForbiddenException(
             'Email Already Exist',
           );
@@ -93,60 +96,60 @@ export class AuthService {
     return this.getTokens(user);
   }
 
-  async logoutLocal(userId : string) {
-    
+  async logoutLocal(userId: string) {
     try {
       await this.prisma.user.updateMany({
-        where:{
+        where: {
           id: userId,
-          hashed_rt_token:{
-            not:null
-          }
+          hashed_rt_token: {
+            not: null,
+          },
         },
-        data:{
-          hashed_rt_token:null
-        }
-      })
+        data: {
+          hashed_rt_token: null,
+        },
+      });
     } catch (error) {
       if (
-        error instanceof PrismaClientKnownRequestError
+        error instanceof
+        PrismaClientKnownRequestError
       ) {
         throw new UserNotFoundException(userId);
       }
 
       throw error;
     }
-    
   }
 
   async refreshToken() {}
 
-  async getTokens( user: User): Promise<AuthTokenResponse> {
-
+  async getTokens(
+    user: User,
+  ): Promise<AuthTokenResponse> {
     const payload = {
       sub: user.id,
       email: user.email,
     };
 
-    const jwtSecret       = this.config.get('JWT_SECRET');
-    const jwtRefeshSecret = this.config.get('JWT_RT_SECRET');
+    const jwtSecret =
+      this.config.get('JWT_SECRET');
+    const jwtRefeshSecret = this.config.get(
+      'JWT_RT_SECRET',
+    );
 
     const [at, rt] = await Promise.all([
-
-      this.jwt.signAsync(
-        payload,
-        {
-          expiresIn: this.config.get('JWT_EXPIRES_IN'),
-          secret: jwtSecret,
-        },
-      ),
-      this.jwt.signAsync(
-        payload,
-        {
-          expiresIn: this.config.get('JWT_RT_EXPIRES_IN'),
-          secret: jwtRefeshSecret,
-        },
-      )
+      this.jwt.signAsync(payload, {
+        expiresIn: this.config.get(
+          'JWT_EXPIRES_IN',
+        ),
+        secret: jwtSecret,
+      }),
+      this.jwt.signAsync(payload, {
+        expiresIn: this.config.get(
+          'JWT_RT_EXPIRES_IN',
+        ),
+        secret: jwtRefeshSecret,
+      }),
     ]);
 
     await this.updateRtToken(user.id, rt);
@@ -159,15 +162,18 @@ export class AuthService {
     };
   }
 
-  async updateRtToken(userId : string , rtToken: string){
+  async updateRtToken(
+    userId: string,
+    rtToken: string,
+  ) {
     const hash = await argon.hash(rtToken);
     await this.prisma.user.update({
-      where:{
-        id: userId
+      where: {
+        id: userId,
       },
-      data:{
-        hashed_rt_token: hash
-      }
+      data: {
+        hashed_rt_token: hash,
+      },
     });
   }
 }

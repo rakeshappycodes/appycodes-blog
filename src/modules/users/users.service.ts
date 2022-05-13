@@ -9,57 +9,54 @@ import { UserNotFoundException } from '@common/exceptions';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly prisma : PrismaService
+    private readonly prisma: PrismaService,
   ) {}
- 
 
   async findAll() {
     return await this.prisma.user.findMany({
-      select: PrismaUserResponseObject
-    })
+      select: PrismaUserResponseObject,
+    });
   }
 
   async findOne(key: string) {
-    const user =  await this.prisma.user.findMany({ 
-      where:{
-        OR:[
+    const user = await this.prisma.user.findMany({
+      where: {
+        OR: [
           {
-            id:key
+            id: key,
           },
           {
-            email:key
-          }
-        ]
+            email: key,
+          },
+        ],
       },
-      select: PrismaUserResponseObject
-    })
-  
+      select: PrismaUserResponseObject,
+    });
+
     return user;
   }
 
-
-  async update(
-    params: {
-      id: string,
-      updateUserDto: UpdateUserDto
-    }
-  ) {
+  async update(params: {
+    id: string;
+    updateUserDto: UpdateUserDto;
+  }) {
     const { id, updateUserDto } = params;
     try {
-      
       return await this.prisma.user.update({
         data: {
           ...updateUserDto,
         },
-        where:{ 
-          id:id
+        where: {
+          id: id,
         },
-        select: PrismaUserResponseObject
+        select: PrismaUserResponseObject,
       });
     } catch (error) {
       if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === PrismaError.RecordDoesNotExist
+        error instanceof
+          PrismaClientKnownRequestError &&
+        error.code ===
+          PrismaError.RecordDoesNotExist
       ) {
         throw new UserNotFoundException(id);
       }
@@ -67,13 +64,11 @@ export class UsersService {
     }
   }
 
-  
-
   async remove(id: string) {
     return await this.prisma.user.delete({
-      where:{
-        id:id
-      }
+      where: {
+        id: id,
+      },
     });
   }
 }
