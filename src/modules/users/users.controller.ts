@@ -14,7 +14,6 @@ import { GetUser } from '../auth/decorator';
 import { JwtGaurd } from '../auth/gaurds';
 import { UserEvent } from '@common/events/user.event';
 
-
 @Controller('users')
 export class UsersController {
   constructor(
@@ -42,16 +41,16 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
+    /**
+     * Update user data
+     */
+    const params = { id, updateUserDto };
+    const updatedUser =
+      await this.usersService.update(params);
 
-  /**
-   * Update user data
-   */
-    const params = { id, updateUserDto}
-    const updatedUser =  await this.usersService.update(params);
-
-  /**
-   * Send Event to User Event Emitter
-   */
+    /**
+     * Send Event to User Event Emitter
+     */
 
     this.UserEvent.userUpdateEvent(updatedUser);
     return updatedUser;

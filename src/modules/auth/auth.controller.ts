@@ -13,7 +13,10 @@ import {
   AuthLoginDto,
   AuthSignupDto,
 } from './dto';
-import { JwtGaurd, JwtRefeshGaurd } from './gaurds';
+import {
+  JwtGaurd,
+  JwtRefeshGaurd,
+} from './gaurds';
 
 @Controller('auth')
 export class AuthController {
@@ -28,9 +31,7 @@ export class AuthController {
   @Post('/local/login')
   loginLocal(@Body() dto: AuthLoginDto) {
     return this.auth.loginLocal(dto);
-    
   }
-
 
   @UseGuards(JwtGaurd)
   @HttpCode(HttpStatus.OK)
