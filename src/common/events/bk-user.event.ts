@@ -10,12 +10,21 @@ export class UserEvent {
     private eventEmitter: EventEmitter2,
   ) {}
 
+  userCreateEvent(user: any) {
+    this.eventEmitter.emitAsync('user.created', user);
+  }
+
   userUpdateEvent(user: any) {
     this.eventEmitter.emit('user.updated', user);
   }
 
   userDeleteEvent(email: string) {
     this.eventEmitter.emit('user.deleted', email);
+  }
+
+  @OnEvent('user.created')
+  handleUserCreateEvent(user: any) {
+    console.log(user);
   }
 
   @OnEvent('user.updated')

@@ -1,7 +1,8 @@
 import {
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   AuthLoginDto,
@@ -17,6 +18,7 @@ import { titleCaseWord } from '@common/utils';
 import { PrismaService } from '@common/prisma/prisma.service';
 import { PrismaError } from '@common/prisma/prismaError';
 import { UserNotFoundException } from '@common/exceptions';
+import { MailService } from '@common/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +26,12 @@ export class AuthService {
     private config: ConfigService,
     private prisma: PrismaService,
     private jwt: JwtService,
+    private mail:MailService
   ) {}
 
   async signupLocal(dto: AuthSignupDto) {
     const hash = await argon.hash(dto.password);
+    const eToken = this.getEmailVerificationToken()
     try {
       const user = await this.prisma.user.create({
         data: {
@@ -36,12 +40,16 @@ export class AuthService {
           first_name: titleCaseWord(
             dto.first_name,
           ),
-          last_name: dto.last_name,
+          last_name: titleCaseWord(dto.last_name),
+          email_hash:eToken ,
         },
       });
 
+      this.mail.sendUserConfirmation(user, eToken);
+
       return this.getTokens(user);
     } catch (error) {
+
       if (
         error instanceof
         PrismaClientKnownRequestError
@@ -50,9 +58,7 @@ export class AuthService {
           error.code ===
           PrismaError.RecordAlreadyExists
         ) {
-          throw new ForbiddenException(
-            'Email Already Exist',
-          );
+          throw new HttpException('Email Already Exist', HttpStatus.CONFLICT);
         }
       }
       throw error;
@@ -175,5 +181,9 @@ export class AuthService {
         hashed_rt_token: hash,
       },
     });
+  }
+
+  getEmailVerificationToken(){
+    return  Array.from(Array(20), () => Math.floor(Math.random() * 36).toString(36)).join('');
   }
 }

@@ -12,13 +12,11 @@ import { User } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { GetUser } from '../auth/decorator';
 import { JwtGaurd } from '../auth/gaurds';
-import { UserEvent } from '@common/events/user.event';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly UserEvent: UserEvent,
   ) {}
   @UseGuards(JwtGaurd)
   @Get('me')
@@ -51,8 +49,6 @@ export class UsersController {
     /**
      * Send Event to User Event Emitter
      */
-
-    this.UserEvent.userUpdateEvent(updatedUser);
     return updatedUser;
   }
 

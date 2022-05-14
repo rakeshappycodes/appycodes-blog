@@ -18,6 +18,7 @@ model User {
   password         String?
   is_active        Boolean?  @default(false)
   email_verifed_at DateTime?
+  email_hash       String?
   hashed_rt_token  String?
   createAt         DateTime? @default(now())
   updatedAt        DateTime  @updatedAt
