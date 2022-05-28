@@ -1,8 +1,5 @@
 {
   "name": "appycodes-blog",
-  "engines": {
-    "node": "14.16.1"
-  },
   "version": "0.0.1",
   "description": "",
   "author": "Rakesh Roy",
