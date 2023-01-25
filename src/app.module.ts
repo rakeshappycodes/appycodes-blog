@@ -9,6 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { AppController } from 'app.controller';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     PostsModule,
     UploadsModule,
   ],
+  controllers:[AppController],
   providers: [
     MailService,
     { provide: APP_GUARD, useClass: JwtGaurd },

@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id               String    @id @unique @default(cuid())
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
   email            String    @unique
   first_name       String
   last_name        String
@@ -23,20 +23,21 @@ model User {
   createAt         DateTime? @default(now())
   updatedAt        DateTime  @updatedAt
   posts            Post[]
+  comments         Comment[]
   role             Role      @default(USER)
 
   @@map("users")
 }
 
 model Post {
-  id          String     @id @unique @default(cuid())
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   slug        String?    @unique
   description String?
   image       String?
   is_active   Boolean?   @default(true)
   author      User?      @relation(fields: [authorId], references: [id])
-  authorId    String
+  authorId    String     @db.ObjectId
   status      PostStatus @default(DRAFT)
   createAt    DateTime?  @default(now())
   updatedAt   DateTime   @updatedAt
@@ -45,9 +46,11 @@ model Post {
 }
 
 model Comment {
-  id      String @id @unique @default(cuid())
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   content String
+  author      User?      @relation(fields: [authorId], references: [id])
+  authorId    String     @db.ObjectId
 
   @@map("comments")
 }
