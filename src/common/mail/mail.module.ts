@@ -20,7 +20,7 @@ import { ConfigService } from '@nestjs/config';
           secure: false,
           port: config.get('MAIL_PORT'),
           auth: {
-            user: config.get('MAIL_USER'),
+            user: config.get('MAIL_USERNAME'),
             pass: config.get('MAIL_PASSWORD'),
           },
         },

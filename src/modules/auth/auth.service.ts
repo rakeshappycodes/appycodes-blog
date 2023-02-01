@@ -48,6 +48,8 @@ export class AuthService {
         },
       });
 
+      await this.mail.sendUserConfirmation(user , eToken);
+
       delete user.password;
       return user;
     } catch (error) {
