@@ -1,3 +1,4 @@
+import { UserEvent } from '@common/events/user.event';
 import {
   Body,
   Controller,
@@ -25,12 +26,14 @@ import {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private userEvent: UserEvent) {}
 
   @isPublic()
   @Post('local/signup')
-  signupLocal(@Body() dto: AuthSignupDto) {
-    return this.auth.signupLocal(dto);
+  async signupLocal(@Body() dto: AuthSignupDto) {
+    let user =  await this.auth.signupLocal(dto);
+    this.userEvent.userCreateEvent(user);
+    return user;
   }
 
   @HttpCode(HttpStatus.OK)

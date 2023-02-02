@@ -1,3 +1,4 @@
+import { UserEvent } from '@common/events/user.event';
 import { MailModule } from '@common/mail/mail.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,6 +16,7 @@ import {
     AuthService,
     JwtStrategy,
     RtStrategy,
+    UserEvent
   ],
 })
 export class AuthModule {}

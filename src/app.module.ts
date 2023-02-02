@@ -10,6 +10,7 @@ import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { AppController } from 'app.controller';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AppController } from 'app.controller';
     CloudinaryModule,
     PostsModule,
     UploadsModule,
+    EventEmitterModule.forRoot()
   ],
   controllers:[AppController],
   providers: [

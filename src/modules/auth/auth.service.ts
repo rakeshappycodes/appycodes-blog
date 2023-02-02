@@ -28,7 +28,6 @@ export class AuthService {
     private config: ConfigService,
     private prisma: PrismaService,
     private jwt: JwtService,
-    private mail: MailService,
   ) {}
 
   async signupLocal(dto: AuthSignupDto) {
@@ -47,9 +46,6 @@ export class AuthService {
           email_hash: eToken,
         },
       });
-
-      await this.mail.sendUserConfirmation(user , eToken);
-
       delete user.password;
       return user;
     } catch (error) {
@@ -269,7 +265,7 @@ export class AuthService {
   }
 
   getEmailVerificationToken() {
-    return Array.from(Array(20), () =>
+    return Array.from(Array(50), () =>
       Math.floor(Math.random() * 36).toString(36),
     ).join('');
   }

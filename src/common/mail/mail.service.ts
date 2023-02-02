@@ -12,12 +12,12 @@ export class MailService {
   ) {}
 
   async sendUserConfirmation(
-    user: User,
-    token: string,
+    user: User
   ) {
     const confirm_url = this.config.get(
       'MAIl_COFIRM_URL',
     );
+    const token = user.email_hash;
     const mailFrom = this.config.get('MAIL_FROM');
     const full_confirm_url =
       confirm_url +

@@ -1,16 +1,19 @@
+import { MailService } from '@common/mail/mail.service';
 import { Injectable } from '@nestjs/common';
 import {
   EventEmitter2,
   OnEvent,
 } from '@nestjs/event-emitter';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserEvent {
   constructor(
     private eventEmitter: EventEmitter2,
+    private mail: MailService,
   ) {}
 
-  userCreateEvent(user: any) {
+  userCreateEvent(user: User) {
     this.eventEmitter.emitAsync(
       'user.created',
       user,
@@ -27,7 +30,7 @@ export class UserEvent {
 
   @OnEvent('user.created')
   handleUserCreateEvent(user: any) {
-    console.log(user);
+   this.mail.sendUserConfirmation(user);
   }
 
   @OnEvent('user.updated')
