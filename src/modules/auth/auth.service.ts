@@ -100,8 +100,8 @@ export class AuthService {
       throw new ForbiddenException(
         'Acoount Disabled',
       );
-
-    return this.getTokens(user);
+    let userTokenData = await this.getTokens(user);
+    return {'message': 'Successfully Registered' , 'data': userTokenData}
   }
 
   async logoutLocal(userId: string) {
@@ -218,11 +218,8 @@ export class AuthService {
       email: user.email,
     };
 
-    const jwtSecret =
-      this.config.get('JWT_SECRET');
-    const jwtRefeshSecret = this.config.get(
-      'JWT_RT_SECRET',
-    );
+    const jwtSecret =  this.config.get('JWT_SECRET');
+    const jwtRefeshSecret = this.config.get('JWT_RT_SECRET');
 
     const [at, rt] = await Promise.all([
       this.jwt.signAsync(payload, {

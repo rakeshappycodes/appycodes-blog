@@ -2,6 +2,7 @@ import { UserEvent } from '@common/events/user.event';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -54,7 +55,7 @@ export class AuthController {
   @isPublic()
   @UseGuards(JwtRefeshGaurd)
   @HttpCode(HttpStatus.OK)
-  @Post('local/refesh')
+  @Get('local/refresh')
   refreshToken(@GetCurrentUser() user: any) {
     return this.auth.refreshToken(
       user.id,
