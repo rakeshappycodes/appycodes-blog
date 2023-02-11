@@ -20,6 +20,5 @@ export class AuthSignupDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsAlphanumeric()
   password: string;
 }

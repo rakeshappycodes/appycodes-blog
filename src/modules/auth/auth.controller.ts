@@ -34,7 +34,9 @@ export class AuthController {
   async signupLocal(@Body() dto: AuthSignupDto) {
     let user =  await this.auth.signupLocal(dto);
     this.userEvent.userCreateEvent(user);
-    return user;
+    delete user.email_hash;
+    delete user.id;
+    return {'message': 'Successfully Registered' , 'data': user}
   }
 
   @HttpCode(HttpStatus.OK)
