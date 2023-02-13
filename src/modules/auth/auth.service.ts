@@ -132,13 +132,17 @@ export class AuthService {
   }
 
   async verifyEmail(dto: ConfrimEmailDto) {
-    const user = await this.prisma.user.findFirst(
+
+    console.log
+
+    const user = await this.prisma.user.findUnique(
       {
         where: {
           id: dto.user_id,
         },
       },
     );
+
 
     if (!user)
       throw new ForbiddenException(
@@ -148,7 +152,7 @@ export class AuthService {
     if (user.is_active) {
       throw new HttpException(
         'Email Already Verified',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.OK,
       );
     }
 
