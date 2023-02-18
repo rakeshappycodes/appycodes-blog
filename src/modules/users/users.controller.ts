@@ -21,6 +21,10 @@ export class UsersController {
   @UseGuards(JwtGaurd)
   @Get('me')
   getMe(@GetCurrentUser() user: User) {
+    delete user.hashed_rt_token
+    delete user.email_hash
+    delete user.email_verifed_at
+    delete user.createAt
     return user;
   }
 

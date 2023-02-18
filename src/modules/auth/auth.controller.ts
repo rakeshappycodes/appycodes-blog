@@ -68,7 +68,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @isPublic()
   @Post('confirm')
-  confrimEmail(@Body() dto: ConfrimEmailDto) {
-    return this.auth.verifyEmail(dto);
+  async confrimEmail(@Body() dto: ConfrimEmailDto) {
+    let user =  await this.auth.verifyEmail(dto);
+    delete user.password;
+    return {'message': 'Successfully Verified' , 'data': user}
   }
 }

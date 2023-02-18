@@ -12,6 +12,5 @@ export class AuthLoginDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsAlphanumeric()
   password: string;
 }
